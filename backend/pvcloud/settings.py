@@ -6,6 +6,10 @@ from urllib.parse import urlparse
 
 from dotenv import load_dotenv
 
+# Ce fichier centralise la configuration du projet Django.
+# Il définit les applications installées, les middlewares, les variables
+# d'environnement, la base de données, les règles JWT et la configuration CORS.
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / '.env')
 

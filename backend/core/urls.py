@@ -4,6 +4,12 @@ from .views import (
     FicheUploadScanView, FicheValidateOCRView, FicheScanRetrieveView
 )
 
+# Ces routes exposent l'API principale versionnée par le backend.
+# Elles découpent les opérations en trois grandes familles :
+# - authentification et profil,
+# - consultation/modification des fiches,
+# - téléversement et validation des scans OCR.
+
 urlpatterns = [
     path('health/', HealthView.as_view(), name='health'),
     path('auth/inscription/', RegisterView.as_view(), name='inscription'),
