@@ -1,0 +1,25 @@
+# PV Cloud — Prérequis techniques
+# ================================
+# Ce fichier liste les dépendances système / versions d'outils nécessaires
+# pour faire tourner l'ensemble du projet (frontend + futur backend).
+# Les dépendances propres au frontend (paquets npm) sont gérées dans
+# frontend/package.json.
+
+## Frontend (React + TanStack Start)
+- Node.js >= 18 (recommandé : 22.x)
+- npm >= 10 (ou pnpm/yarn comme alternative)
+- Navigateur récent (Chrome, Firefox, Edge)
+- (Optionnel) Bun — utilisé lors de la génération Lovable, mais npm fait l'affaire
+
+## Backend (dépendances recommandées)
+- Django>=4.0
+- djangorestframework
+- djangorestframework-simplejwt
+- django-filter
+- django-cors-headers
+- pillow
+- pytesseract  # requires system tesseract installation
+- pdf2image   # requires Poppler system binary
+- psycopg2-binary  # if using PostgreSQL
+- python-dotenv
+

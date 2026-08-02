@@ -1,0 +1,5 @@
+Tests should be added for:
+- Authentication by matricule
+- Permissions (student cannot access another student's fiche)
+- Upload and OCR pipeline (mock OCR in unit tests)
+- Filtering and pagination of fiche list
