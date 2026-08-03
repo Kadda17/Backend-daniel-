@@ -1,8 +1,9 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { Search, ScanLine, LogOut } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { MOCK_FICHES, type Fiche, type Mention } from "@/lib/mock-data";
+import { apiFetchFiches } from "@/lib/api";
 import { BrandMark, Badge } from "@/components/mockup/shared";
 
 export const Route = createFileRoute("/dashboard")({
@@ -24,6 +25,32 @@ function DashboardPage() {
   const [salle, setSalle] = useState("");
   const [date, setDate] = useState("");
   const [search, setSearch] = useState("");
+  const [fiches, setFiches] = useState<Fiche[]>(MOCK_FICHES);
+  const [loading, setLoading] = useState(false);
+
+  // Au montage du tableau de bord, on tente d'obtenir les fiches depuis l'API.
+  // Si le backend n'est pas démarré ou si la session n'est pas prêtes,
+  // on conserve les données mock afin de ne pas casser l'affichage.
+  useEffect(() => {
+    const load = async () => {
+      try {
+        setLoading(true);
+        const token = localStorage.getItem("pv-cloud-access-token") ?? undefined;
+        const backendFiches = await apiFetchFiches(token);
+        if (backendFiches.length > 0) {
+          setFiches(backendFiches);
+        }
+      } catch {
+        setFiches(MOCK_FICHES);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (isAuthenticated && user) {
+      void load();
+    }
+  }, [isAuthenticated, user]);
 
   if (!isAuthenticated || !user) {
     navigate({ to: "/login" });
@@ -36,7 +63,7 @@ function DashboardPage() {
   }
 
   const filtered = useMemo(() => {
-    return MOCK_FICHES.filter((f) => {
+    return fiches.filter((f) => {
       if (annee && !f.date.includes(annee)) return false;
       if (salle && f.salle !== salle) return false;
       if (date && f.date !== date) return false;
@@ -50,10 +77,10 @@ function DashboardPage() {
       }
       return true;
     });
-  }, [annee, salle, date, search]);
+  }, [annee, salle, date, search, fiches]);
 
-  const annees = useMemo(() => [...new Set(MOCK_FICHES.map((f) => f.date.slice(-4)))], []);
-  const salles = useMemo(() => [...new Set(MOCK_FICHES.map((f) => f.salle))], []);
+  const annees = useMemo(() => [...new Set(fiches.map((f) => f.date.slice(-4)))], [fiches]);
+  const salles = useMemo(() => [...new Set(fiches.map((f) => f.salle))], [fiches]);
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -109,6 +136,12 @@ function DashboardPage() {
             Consultez et filtrez les fiches de soutenance enregistrées.
           </p>
         </div>
+
+        {loading && (
+          <div className="mb-4 rounded-md border border-border bg-white px-4 py-3 text-sm text-muted-foreground">
+            Chargement des fiches depuis l’API backend…
+          </div>
+        )}
 
         <div className="mb-6 rounded-lg border border-border bg-white p-4">
           <div className="mb-3 hidden items-center gap-2 text-xs font-medium uppercase tracking-wider text-muted-foreground lg:flex">
